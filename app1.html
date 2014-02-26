@@ -1,0 +1,27 @@
+<html>
+<body>
+	<img src="images/will.gif" style="height:95%">
+</body>	
+<script src="js/app.js"></script>
+<script>
+function drums() {
+	// speed in miliseconds, length of the beat
+	var speed = 150,  
+		length = 8;
+	for(var i=1; i<96; i++) {
+		var value = i / length,
+		 	decimal = value - Math.floor(value);
+		if (decimal == 0.125 || decimal == 0.625 || decimal == 0.75) {
+			playDrum(sounds.kick, i, speed);
+		}
+		if (decimal == 0.375 || decimal == 0.875) {
+			playDrum(sounds.snare, i, speed);
+		}
+		if (i % 2 != 0) {
+			playDrum(sounds.hihat, i, speed);
+		}
+	}
+};
+setTimeout(drums, 2000)
+</script>
+</html>

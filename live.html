@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Live input record and playback</title>
+  <style type='text/css'>
+    ul { list-style: none; }
+    #recordingslist audio { display: block; margin-bottom: 10px; }
+    body {
+      background:url('images/Hamza-Fletcher-Beatbox-Background.png');
+      color:#fff;
+      text-align:center;
+      margin:auto; 
+      font-family: Georgia;
+    }
+
+    button {
+      font-size:1.5em;
+    }
+    .diofeher {
+      position:absolute;
+      font-size: 2em;
+      right:0;
+      bottom:1em;
+    }
+
+    .diofeher a {
+      color:#fff;
+      font-weight: 500;
+      text-decoration:none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Paraiba.js live</h1>
+  <div>
+    <button onclick="startRecording(this);">b</button>
+    <button class="kick" onclick="stopRecording(this);" disabled>stop</button>
+  </div>
+
+  <div>
+    <button onclick="startRecording(this);">s</button>
+    <button class="snare" onclick="stopRecording(this);" disabled>stop</button>
+  </div>
+
+  <div>
+    <button onclick="startRecording(this);">t</button>
+    <button class="hihat_closed" onclick="stopRecording(this);" disabled>stop</button>
+  </div>
+
+  <div>
+    <button onclick="startRecording(this);">ts</button>
+    <button class="hihat_open" onclick="stopRecording(this);" disabled>stop</button>
+  </div>
+
+  <div>
+    <button onclick="startRecording(this);">k</button>
+    <button class="snare_k" onclick="stopRecording(this);" disabled>stop</button>
+  </div>
+
+  <div>
+    <button onclick="startRecording(this);">tr</button>
+    <button class="trumpet" onclick="stopRecording(this);" disabled>stop</button>
+  </div>
+
+  <div>
+    <button onclick="startRecording(this);">wd</button>
+    <button class="waterdrop" onclick="stopRecording(this);" disabled>stop</button>
+  </div>
+
+
+  <div>
+    <button onclick="startRecording(this);">bongo</button>
+    <button class="bongo" onclick="stopRecording(this);" disabled>stop</button>
+  </div>
+
+  <p><input type="text" id="speed">speed</p>
+
+  <button onclick="init()">RECORD AGAIN</button>
+  <button onclick="done()">DONE</button>
+  <button onclick="punkBeat()">PUNK BEAT</button>
+  <button onclick="beats1()">BEAT</button>
+  <button onclick="beats2()">BEATZ</button>
+  <button onclick="reggae()">BOB</button>
+
+  <p class="diofeher">made with ❤ by <a href="www.diofeher.net/">diofeher</a></p>
+  <script>
+  function __log(e, data) {
+    console.log(data);
+  }
+
+  // z x c v
+  // h j k l
+  var keyBindings = {
+    '90': 'kick',
+    '88': 'snare',
+    '67': 'hihat_closed',
+    '86': 'hihat_open',
+    '72': 'snare_k',
+    '74': 'trumpet',
+    '75': 'waterdrop',
+    '76': 'bongo',
+  };
+  document.onkeydown = function(e)  {
+    kc = e.keyCode;
+    if(kc in keyBindings) {
+      play(sounds[keyBindings[kc]], 0, 0);
+    }
+  }
+
+  var audio_context;
+  var recorder;
+  var stream_G;
+  var sounds = {};
+
+  function startUserMedia(stream) {
+    stream_G = stream;
+    var input = audio_context.createMediaStreamSource(stream);
+    __log('Media stream created.');
+    
+    input.connect(audio_context.destination);
+    __log('Input connected to audio context destination.');
+    
+    recorder = new Recorder(input);
+    __log('Recorder initialised.');
+  }
+  function play(buffer, i, bpm) {
+    setTimeout(function(){
+        var source = audio_context.createBufferSource();
+        source.buffer = buffer;
+        gainNode = audio_context.createGainNode();
+        gainNode.gain.value = 3
+        source.connect(gainNode);
+        gainNode.connect(audio_context.destination);
+        source.start(0);
+    }, bpm * i);
+  }
+
+  function done(){
+    stream_G.stop();
+  }
+
+  function punkBeat() {
+    // speed in miliseconds, length of the beat
+    var elem = document.getElementById('speed');
+    var speed = elem && elem.value || 200, 
+      length = 8;
+    for(var i=1; i<96; i++) {
+      var value = i / length,
+        decimal = value - Math.floor(value);
+      if (decimal == 0.125 || decimal == 0.625 || decimal == 0.75) {
+        play(sounds.kick, i, speed);
+      }
+      if (decimal == 0.375 || decimal == 0.875) {
+        play(sounds.snare, i, speed);
+      }
+      if (i % 2 != 0) {
+        play(sounds.hihat_open, i, speed);
+      }
+    }
+  }
+
+  function beats1() {
+    // b ts ts b k ts ts t
+    var length = 8;
+    var elem = document.getElementById('speed');
+    var speed = elem && elem.value || 200;
+    for(var i=1; i<40; i++) {
+      var value = i / length,
+        decimal = value - Math.floor(value);
+      if (decimal == 0.125 || decimal == 0.5) {
+        play(sounds.kick, i, speed)
+      }
+      if (decimal == 0.25 || decimal == 0.375 || decimal == 0.75 || decimal== 0.875) {
+        play(sounds.hihat_open, i, speed)
+      }
+      if (decimal == 0.625) {
+        play(sounds.snare_k, i, speed)
+      }
+      if (decimal == 1.00) {
+        play(sounds.hihat_closed, i, speed)
+      }
+    }
+  }
+
+  function beats2() {
+    // b ts k ts ts b k ts
+    var length = 8;
+    var elem = document.getElementById('speed');
+    var speed = elem && elem.value || 200;
+    for(var i=1; i<40; i++) {
+      var value = i / length,
+        decimal = value - Math.floor(value);
+      if (decimal == 0.125 || decimal == 0.875) {
+        play(sounds.kick, i, speed)
+      }
+      if (decimal == 0.25 || decimal == 0.5 || decimal == 0.625 || decimal == 1.00) {
+        play(sounds.hihat_open, i, speed)
+      }
+      if (decimal == 0.375 || decimal == 0.750) {
+        play(sounds.snare_k, i, speed)
+      }
+
+      if (decimal == 1.00) {
+        play(sounds.hihat_closed, i, speed)
+      }
+    }
+  }
+
+  function reggae() {
+    // t ts k ts
+    var length = 4;
+    var elem = document.getElementById('speed');
+    var speed = elem && elem.value || 150;
+    for(var i=1; i<30; i++) {
+      var value = i / length,
+        decimal = value - Math.floor(value);
+        console.log(decimal)
+      if (decimal == 0.50 || decimal == 0) {
+        console.log('open')
+        play(sounds.hihat_open, i, speed)
+      }
+      if (decimal == 0.750) {
+        console.log('k')
+        play(sounds.snare_k, i, speed)
+      }
+
+      if (decimal == 0.250) {
+        console.log('closed')
+        play(sounds.kick, i, speed)
+      }
+    }
+  }
+
+  function startRecording(button) {
+    recorder && recorder.record();
+    button.disabled = true;
+    button.nextElementSibling.disabled = false;
+    __log('Recording...');
+  }
+
+  function stopRecording(button) {
+    recorder && recorder.stop();
+    button.disabled = true;
+    button.previousElementSibling.disabled = false;
+    __log('Stopped recording.');
+    var sound = button.className;
+    createDownloadLink(sound);
+    recorder.clear();
+  }
+
+  function createDownloadLink(sound) {
+    recorder && recorder.getBuffer(function(buffers) {
+      var newSource = audio_context.createBufferSource();
+      var newBuffer = audio_context.createBuffer( 2, buffers[0].length, audio_context.sampleRate );
+      newBuffer.getChannelData(0).set(buffers[0]);
+      newBuffer.getChannelData(1).set(buffers[1]);
+      sounds[sound] = newBuffer;
+      play(sounds[sound], 1, 300)
+    });
+  }
+
+  function init() {
+        try {
+      // webkit shim
+      window.AudioContext = window.AudioContext || window.webkitAudioContext;
+      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+      window.URL = window.URL || window.webkitURL;
+      
+      audio_context = new AudioContext;
+      __log('Audio context set up.');
+      __log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
+    } catch (e) {
+      alert('No web audio support in this browser!');
+    }
+    
+    navigator.getUserMedia({audio: true}, startUserMedia, function(e) {
+      __log('No live audio input: ' + e);
+    });
+  }
+
+  window.onload = function() {
+    init();
+  };
+  </script>
+
+  <script src="js/recorder.js"></script>
+</body>
+</html>

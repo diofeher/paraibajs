@@ -1,0 +1,27 @@
+To run local examples cd into project directory and
+python -m SimpleHTTPServer
+
+Drums example
+----
+http://localhost:8000/app1.html   
+
+Spacedrum
+-----
+http://diofeher.net/spacedrum
+got
+[["o8G4",1014],["o1C4",2022],["o4Eb4",3102],["o6F4",3280],["o8G4",3451],["o1C4",4193],["o4Eb4",4974],["o6F4",5127],["o3D4",5358]]
+
+Distortion example
+----
+http://s0.licson.net/demos/AudioDistort/
+
+
+gainnode volume
+http://orm-other.s3.amazonaws.com/webaudioapi/samples/volume/index.html
+
+oscillator and waveforms
+http://orm-other.s3.amazonaws.com/webaudioapi/samples/oscillator/index.html
+
+LIVE SHOW
+-----
+http://localhost:8000/app3.html
